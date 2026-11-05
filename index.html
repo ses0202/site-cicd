@@ -1,0 +1,1064 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Верста — автомобили с проверенной историей и гарантией качества</title>
+<meta name="description" content="Автомобили с пробегом и новые: осмотр по 112 пунктам, отчёт по VIN, расчёт кредита и trade-in онлайн, запись на тест-драйв за минуту.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Unbounded:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   1. ТОКЕНЫ
+   Палитра: чернила, бумага ПТС, зелёный дорожного знака,
+   красный габаритного огня. Один акцент — красный (действия).
+   ========================================================= */
+:root{
+  --ink:#14212B; --ink-2:#22323E;
+  --paper:#EDEFE8; --card:#F8F9F5; --white:#fff;
+  --line:#C5CCC4; --muted:#4F5D66;
+  --green:#0B6B50; --green-d:#08523D;
+  --red:#C81E35; --red-d:#A3172A;
+  --glass:#CFE0E6;
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --f-body:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --gutter:16px; --max:1200px;
+  --r-s:8px; --r-m:14px;
+  --space:clamp(64px,9vw,120px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--f-body);-webkit-font-smoothing:antialiased}
+img,svg{display:block;max-width:100%}
+h1,h2,h3{font-family:var(--f-display);font-weight:500;line-height:1.15;margin:0;letter-spacing:-.01em}
+p{margin:0}
+a{color:inherit}
+.wrap{width:100%;max-width:var(--max);margin-inline:auto;padding-inline:var(--gutter)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:8px;top:-60px;background:var(--ink);color:#fff;padding:10px 16px;border-radius:var(--r-s);z-index:100}
+.skip:focus{top:8px}
+
+/* Фокус: 3px, контраст ≥3:1 на светлом и тёмном фоне (WCAG 2.4.13) */
+:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.dark :focus-visible{outline-color:#fff}
+
+/* =========================================================
+   2. КНОПКИ И ПОЛЯ (состояния: hover, active, disabled, ошибка)
+   ========================================================= */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border:2px solid var(--red);background:var(--red);color:#fff;font:600 15px/1 var(--f-body);border-radius:var(--r-s);cursor:pointer;text-decoration:none;transition:background .15s,border-color .15s,transform .1s}
+.btn:hover{background:var(--red-d);border-color:var(--red-d)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled,.btn[aria-disabled="true"]{background:#9AA5AB;border-color:#9AA5AB;cursor:not-allowed}
+.btn--ghost{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn--ghost:hover{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn--sm{min-height:44px;padding:0 16px;font-size:14px}
+.field{display:grid;gap:6px}
+.field label,.field legend{font-weight:500;font-size:14px}
+.input{width:100%;min-height:48px;padding:10px 14px;border:1.5px solid var(--ink);border-radius:var(--r-s);background:var(--white);color:var(--ink);font:inherit}
+.input:hover{border-color:var(--green)}
+.input[aria-invalid="true"]{border-color:var(--red);background:#FDF1F3}
+.err{color:var(--red-d);font-size:13px;font-weight:500}
+.hint{font-size:13px;color:var(--muted)}
+.dark .hint{color:#B5C1C8}
+input[type=range]{width:100%;accent-color:var(--red);min-height:32px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;border:0;padding:0;margin:0;min-width:0}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer;width:100%;height:100%}
+.chip span{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1.5px solid var(--ink);border-radius:999px;background:transparent;font-weight:500;font-size:14px;transition:background .15s,color .15s}
+.chip input:hover+span{background:rgba(20,33,43,.08)}
+.chip input:checked+span{background:var(--ink);color:#fff}
+.chip input:focus-visible+span{outline:3px solid var(--red);outline-offset:3px}
+.dark .chip span{border-color:#fff;color:#fff}
+.dark .chip input:hover+span{background:rgba(255,255,255,.14)}
+.dark .chip input:checked+span{background:#fff;color:var(--ink)}
+.dark .chip input:focus-visible+span{outline-color:#fff}
+
+/* =========================================================
+   3. ШАПКА
+   ========================================================= */
+.top{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:1.5px solid var(--ink)}
+.top__in{display:flex;align-items:center;gap:20px;min-height:68px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font:600 20px/1 var(--f-display)}
+.nav{margin-left:auto;display:none;gap:4px}
+.nav a{padding:10px 12px;text-decoration:none;font-weight:500;font-size:15px;border-radius:var(--r-s)}
+.nav a:hover{background:rgba(20,33,43,.08)}
+.top__tel{display:none;font-weight:600;text-decoration:none;white-space:nowrap}
+.top__cta{display:none}
+.menu-btn{margin-left:auto;min-width:48px;min-height:48px;border:1.5px solid var(--ink);background:transparent;border-radius:var(--r-s);font:600 14px var(--f-body);cursor:pointer;padding:0 14px}
+.mobile-nav{display:none;border-top:1.5px solid var(--ink);background:var(--paper)}
+.mobile-nav.open{display:block}
+.mobile-nav a{display:block;padding:14px var(--gutter);text-decoration:none;font-weight:500;border-bottom:1px solid var(--line)}
+/* Активный пункт меню (ставит скрипт IntersectionObserver): красное подчёркивание */
+.nav a[aria-current="true"],.mobile-nav a[aria-current="true"]{text-decoration:underline;text-decoration-color:var(--red);text-decoration-thickness:3px;text-underline-offset:7px}
+@media(min-width:960px){
+  .nav{display:flex}.top__tel{display:block}.top__cta{display:inline-flex}
+  .menu-btn,.mobile-nav{display:none!important}
+}
+
+/* =========================================================
+   4. HERO — бирка на ключе (единственный «громкий» элемент)
+   ========================================================= */
+.hero{padding:clamp(32px,6vw,72px) 0 var(--space);position:relative;overflow:hidden}
+.hero__grid{display:grid;gap:40px;align-items:center}
+.hero h1{font-size:clamp(28px,5.4vw,56px);max-width:15ch}
+.hero__lead{margin-top:20px;max-width:52ch;font-size:18px;color:var(--ink-2)}
+.hero__cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.hero__facts{display:flex;flex-wrap:wrap;gap:8px 28px;margin:32px 0 0;padding:0;list-style:none;font-size:15px;color:var(--muted)}
+.hero__facts strong{color:var(--ink);font-weight:600}
+.lane{position:absolute;left:0;right:0;bottom:28px;height:0;border-top:3px dashed var(--line)}
+.keytag-wrap{display:flex;justify-content:center;padding-top:34px}
+.keytag{position:relative;width:min(340px,100%);background:var(--card);border:2px solid var(--ink);border-radius:20px;padding:44px 22px 22px;transform-origin:50% -34px;animation:swing 2.6s cubic-bezier(.3,.6,.4,1) .2s 1 both;box-shadow:0 18px 0 -10px var(--line)}
+.keytag::before{content:"";position:absolute;top:14px;left:50%;width:16px;height:16px;margin-left:-8px;border:2px solid var(--ink);border-radius:50%;background:var(--paper)}
+.keytag::after{content:"";position:absolute;top:-34px;left:50%;height:48px;border-left:2px solid var(--ink)}
+@keyframes swing{0%{transform:rotate(7deg)}25%{transform:rotate(-5deg)}50%{transform:rotate(3deg)}75%{transform:rotate(-1.5deg)}100%{transform:rotate(0)}}
+.keytag h2{font-size:20px}
+.keytag .car{margin:10px 0 6px}
+.keytag dl{margin:12px 0 16px}
+.keytag dl div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.keytag dt{color:var(--muted)}.keytag dd{margin:0;font-weight:600;text-align:right}
+.keytag__price{font:500 24px/1.1 var(--f-display);margin-bottom:14px}
+.vin-ok{color:var(--green);font-weight:600}
+@media(min-width:900px){.hero__grid{grid-template-columns:1.25fr 1fr}.keytag-wrap{justify-content:flex-end}}
+@media(prefers-reduced-motion:reduce){.keytag{animation:none}html{scroll-behavior:auto}}
+
+/* =========================================================
+   5. ОБЩИЕ СЕКЦИИ
+   ========================================================= */
+.sec{padding:var(--space) 0}
+.sec--line{border-top:1.5px solid var(--ink)}
+.sec__head{display:grid;gap:12px;margin-bottom:36px;max-width:60ch}
+.sec__head h2{font-size:clamp(24px,3.6vw,38px)}
+.sec__head p{color:var(--muted);font-size:17px}
+.dark{background:var(--ink);color:#fff}
+.dark .sec__head p{color:#B5C1C8}
+
+/* =========================================================
+   6. КАТАЛОГ
+   ========================================================= */
+.filters{display:grid;gap:16px;padding:20px;background:var(--card);border:1.5px solid var(--ink);border-radius:var(--r-m);margin-bottom:20px}
+.filters__row{display:grid;gap:16px}
+.filters__bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.count{font-weight:600}
+.countbox{display:flex;flex-wrap:wrap;align-items:center;gap:4px 18px}
+.favcount{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:var(--red-d)}
+.favcount svg{width:16px;height:16px;fill:var(--red);stroke:var(--red);stroke-width:2;stroke-linejoin:round}
+/* Кнопка «В избранное» на карточке */
+.fav{position:absolute;top:6px;right:6px;width:44px;height:44px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:transparent;color:var(--ink);cursor:pointer;transition:color .15s,background .15s,transform .1s}
+.fav svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+.fav:hover{background:rgba(200,30,53,.1);color:var(--red)}
+.fav:active{transform:scale(.92)}
+.fav[aria-pressed="true"]{color:var(--red)}
+.fav[aria-pressed="true"] svg{fill:currentColor}
+.link-btn{background:none;border:0;padding:0 4px;min-height:44px;font:600 14px var(--f-body);text-decoration:underline;text-underline-offset:3px;cursor:pointer;color:var(--ink)}
+.link-btn:hover{color:var(--red-d)}
+.sortbox{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.sortbox label{font-weight:500;font-size:14px}
+.sortbox .input{min-height:44px;width:190px}
+@media(min-width:760px){.filters__row{grid-template-columns:1fr 1.2fr 1fr}}
+.grid{display:grid;gap:22px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));padding-top:30px}
+.tag{position:relative;display:flex;flex-direction:column;background:var(--card);border:1.5px solid var(--ink);border-radius:18px;padding:40px 18px 18px;transition:transform .18s,box-shadow .18s}
+.tag:hover{transform:translateY(-3px);box-shadow:0 10px 0 -6px var(--line)}
+.tag::before{content:"";position:absolute;top:13px;left:50%;width:14px;height:14px;margin-left:-7px;border:2px solid var(--ink);border-radius:50%;background:var(--paper)}
+.tag h3{font-size:17px}
+.tag__body{flex:1}
+.spec{display:flex;flex-wrap:wrap;gap:4px 14px;list-style:none;margin:8px 0 0;padding:0;font-size:14px;color:var(--muted)}
+.tag__price{margin-top:14px;font:500 22px/1.1 var(--f-display)}
+.tag__pay{font-size:13px;color:var(--muted);margin-top:4px}
+.tag__act{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.empty{grid-column:1/-1;padding:40px 20px;border:1.5px dashed var(--ink);border-radius:var(--r-m);text-align:center}
+.empty p{margin-bottom:14px}
+.car{width:100%;height:auto;margin:8px 0 4px}
+
+/* =========================================================
+   7. ПРЕИМУЩЕСТВА — «лист осмотра»
+   ========================================================= */
+.sheet{display:grid;gap:40px}
+@media(min-width:900px){.sheet{grid-template-columns:5fr 7fr;gap:72px}.sheet .sec__head{position:sticky;top:100px;align-self:start}}
+.checks{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink)}
+.checks li{display:grid;grid-template-columns:36px 1fr;gap:16px;padding:24px 0;border-bottom:1.5px solid var(--ink)}
+.tick{width:28px;height:28px;border-radius:6px;background:var(--green);display:grid;place-items:center;margin-top:2px}
+.checks h3{font-size:18px;margin-bottom:6px}
+.checks p{color:var(--ink-2);max-width:56ch}
+.checks a{display:inline-flex;align-items:center;min-height:44px;margin-top:6px;font-weight:600;color:var(--green-d)}
+
+/* =========================================================
+   8. КАЛЬКУЛЯТОР
+   ========================================================= */
+.tabs{display:flex;gap:8px;margin-bottom:24px}
+.tab{min-height:48px;padding:0 20px;border:1.5px solid #fff;border-radius:var(--r-s);background:transparent;color:#fff;font:600 15px var(--f-body);cursor:pointer}
+.tab:hover{background:rgba(255,255,255,.12)}
+.tab[aria-selected="true"]{background:#fff;color:var(--ink)}
+.calc{display:grid;gap:28px}
+@media(min-width:900px){.calc{grid-template-columns:1.2fr 1fr;gap:56px}}
+.calc__form{display:grid;gap:22px}
+.pair{display:grid;grid-template-columns:1fr 150px;gap:14px;align-items:end}
+.calc__out{background:var(--card);color:var(--ink);border-radius:var(--r-m);padding:28px;align-self:start}
+.calc__out .big{font:500 clamp(30px,5vw,44px)/1.05 var(--f-display);margin:6px 0 18px}
+.calc__out dl{margin:0 0 20px}
+.calc__out dl div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.calc__out dt{color:var(--muted)}.calc__out dd{margin:0;font-weight:600}
+.calc__out .btn{width:100%}
+.calc__out .btn+.btn{margin-top:10px}
+.note{font-size:13px;color:var(--muted);margin-top:12px}
+.dark .note{color:#B5C1C8}
+.calc__out .note{color:var(--muted)}
+[hidden]{display:none!important}
+
+/* =========================================================
+   9. ДОВЕРИЕ
+   ========================================================= */
+.ledger{display:grid;grid-template-columns:repeat(2,1fr);margin:0 0 48px;border-top:1.5px solid var(--ink)}
+.ledger div{padding:20px 16px 20px 0;border-bottom:1.5px solid var(--ink)}
+.ledger dd{margin:0;font:500 clamp(24px,4vw,40px)/1.1 var(--f-display)}
+.ledger dt{margin-top:6px;color:var(--muted);font-size:14px}
+@media(min-width:800px){.ledger{grid-template-columns:repeat(4,1fr)}.ledger div{border-bottom:0;padding-right:20px}}
+.trust{display:grid;gap:40px}
+@media(min-width:900px){.trust{grid-template-columns:7fr 5fr;gap:64px}}
+.reviews{display:grid;gap:28px}
+blockquote{margin:0;padding:0 0 0 20px;border-left:4px solid var(--green)}
+blockquote p{font-size:18px;max-width:56ch}
+blockquote footer{margin-top:10px;font-size:14px;color:var(--muted)}
+.docs h3{font-size:18px;margin-bottom:14px}
+.docs ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.docs li{padding:14px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;justify-content:space-between;font-size:15px}
+.docs li span:last-child{color:var(--muted);white-space:nowrap}
+
+/* =========================================================
+   10. ТЕСТ-ДРАЙВ + КОНТАКТЫ
+   ========================================================= */
+.td{display:grid;gap:40px}
+@media(min-width:900px){.td{grid-template-columns:7fr 5fr;gap:64px}}
+.form{display:grid;gap:20px;padding:24px;background:var(--card);border:1.5px solid var(--ink);border-radius:var(--r-m)}
+.form__row{display:grid;gap:16px}
+@media(min-width:640px){.form__row{grid-template-columns:1fr 1fr}}
+.check{display:flex;gap:12px;align-items:flex-start;font-size:14px}
+.check input{width:24px;height:24px;margin:0;flex:none;accent-color:var(--green)}
+.done{padding:28px;border:2px solid var(--green);border-radius:var(--r-m);background:var(--card)}
+.done h3{font-size:22px;margin-bottom:10px}
+.contacts h3{font-size:18px;margin-bottom:14px}
+.contacts dl{margin:0 0 22px}
+.contacts dl div{padding:12px 0;border-top:1px solid var(--line)}
+.contacts dt{font-size:13px;color:var(--muted)}
+.contacts dd{margin:2px 0 0;font-weight:500}
+.contacts a{font-weight:600}
+.contacts .btn{margin-top:16px}
+.map{border:1.5px solid var(--ink);border-radius:var(--r-m);background:var(--card);overflow:hidden}
+
+.foot{padding:32px 0 96px;border-top:1.5px solid var(--ink);font-size:14px;color:var(--muted)}
+.foot .wrap{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-between}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:60;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px var(--gutter);background:var(--paper);border-top:1.5px solid var(--ink)}
+@media(min-width:960px){.dock{display:none}.foot{padding-bottom:32px}}
+
+/* Современная визуальная система и адаптивные состояния */
+:root{
+  --paper:#F3F5F1;
+  --card:#FFFFFF;
+  --line:#DCE3DD;
+  --muted:#66737B;
+  --green:#16745A;
+  --green-d:#105A45;
+  --red:#C9273D;
+  --red-d:#A91D31;
+  --gutter:clamp(18px,4vw,36px);
+  --max:1240px;
+  --r-s:10px;
+  --r-m:18px;
+  --space:clamp(56px,8vw,104px);
+}
+body{background:var(--paper)}
+.top{
+  background:rgba(243,245,241,.92);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 6px 24px rgba(20,33,43,.05);
+  backdrop-filter:blur(14px);
+}
+.top__in{min-height:76px}
+.logo{letter-spacing:-.04em}
+.nav{gap:2px}
+.nav a{font-size:14px;color:var(--ink-2)}
+.nav a:hover{background:#E7EBE6}
+.top__tel{font-size:14px}
+.menu-btn{border-color:var(--line);background:var(--card)}
+.mobile-nav{border-top:1px solid var(--line)}
+.mobile-nav a{border-color:var(--line)}
+.hero{
+  padding-top:clamp(48px,8vw,92px);
+  padding-bottom:clamp(72px,10vw,128px);
+  background:
+    radial-gradient(ellipse at 82% 32%,rgba(207,224,230,.34),transparent 38%),
+    linear-gradient(180deg,#F8F9F6 0%,var(--paper) 100%);
+}
+.hero__grid{gap:clamp(32px,6vw,80px)}
+.hero h1{font-size:clamp(34px,5vw,62px);letter-spacing:-.055em;line-height:1.08}
+.hero__lead{font-size:clamp(16px,1.5vw,19px);line-height:1.65}
+.hero__cta{gap:12px}
+.hero__facts{gap:10px 24px;margin-top:30px}
+.hero__facts li{padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.62);font-size:14px}
+.keytag-wrap{padding-top:22px}
+.keytag{
+  width:min(390px,100%);
+  padding:42px 26px 26px;
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:var(--card);
+  box-shadow:0 24px 70px rgba(20,33,43,.13);
+}
+.keytag::before{border-color:var(--line)}
+.keytag::after{border-color:var(--line)}
+.keytag__price{letter-spacing:-.04em}
+.lane{border-color:var(--line)}
+.sec{scroll-margin-top:88px}
+.sec--line{border-top:1px solid var(--line)}
+.sec__head{gap:14px;margin-bottom:32px}
+.sec__head h2{letter-spacing:-.04em}
+.sec__head p{font-size:16px;line-height:1.7}
+.dark{background:#172630}
+.filters{
+  gap:20px;
+  padding:clamp(18px,3vw,26px);
+  border:1px solid var(--line);
+  border-radius:20px;
+  box-shadow:0 8px 26px rgba(20,33,43,.04);
+}
+.input{border:1px solid #D5DDD7;border-radius:10px}
+.input:focus{border-color:var(--green)}
+.chips{gap:8px}
+.chip span{border-color:var(--line);background:#fff}
+.chip input:checked+span{background:var(--ink);border-color:var(--ink)}
+.filters__bar{padding:4px 2px}
+.sortbox{gap:8px 12px}
+.sortbox .input{border-color:var(--line)}
+.grid{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:22px;
+  padding-top:24px;
+}
+.tag{
+  min-width:0;
+  padding:20px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:var(--card);
+  box-shadow:0 4px 18px rgba(20,33,43,.035);
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+.tag:hover{
+  transform:translateY(-4px);
+  border-color:#C8D2CA;
+  box-shadow:0 16px 32px rgba(20,33,43,.09);
+}
+.tag::before{display:none}
+.tag h3{padding-right:36px;font-size:18px;letter-spacing:-.025em}
+.tag .car{
+  height:112px;
+  margin:16px 0 14px;
+  padding:14px;
+  border-radius:14px;
+  background:linear-gradient(145deg,#F0F4F1,#E8EEEA);
+}
+.tag .car--photo{height:168px;padding:0;object-fit:cover;object-position:center 55%}
+.photo-credit{margin:-8px 0 12px;font-size:11px;line-height:1.4;color:var(--muted)}
+.photo-credit a{text-underline-offset:2px}
+.spec{gap:7px;margin-top:0;font-size:12px}
+.spec li{padding:5px 8px;border-radius:7px;background:#F1F4F1;color:#58666E}
+.tag__price{margin-top:18px;font-size:21px;letter-spacing:-.04em}
+.tag__pay{margin-top:6px;font-size:13px}
+.tag__act{gap:9px;margin-top:18px}
+.tag__act .btn{min-width:0;padding-inline:9px;font-size:13px}
+.fav{top:12px;right:12px;color:var(--muted)}
+.fav:hover{background:#FFF0F2}
+.empty{border-color:var(--line);background:#fff}
+.sheet{
+  padding:clamp(22px,4vw,48px);
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:var(--card);
+  box-shadow:0 12px 36px rgba(20,33,43,.04);
+}
+.checks{border-color:var(--line)}
+.checks li{border-color:var(--line)}
+.tick{border-radius:9px}
+.checks a{color:var(--green-d);text-underline-offset:4px}
+.tabs{padding:5px;width:max-content;max-width:100%;border:1px solid rgba(255,255,255,.18);border-radius:13px;background:rgba(255,255,255,.07)}
+.tab{border-color:transparent;border-radius:9px}
+.tab[aria-selected="true"]{box-shadow:0 2px 8px rgba(0,0,0,.14)}
+.calc{gap:32px}
+.calc__out{padding:clamp(22px,3vw,34px);border:1px solid rgba(20,33,43,.07);border-radius:20px;box-shadow:0 18px 44px rgba(0,0,0,.12)}
+.calc__out .big{letter-spacing:-.055em}
+.ledger{border-color:var(--line)}
+.ledger div{border-color:var(--line)}
+blockquote{
+  padding:20px 22px;
+  border:1px solid var(--line);
+  border-left:4px solid var(--green);
+  border-radius:0 14px 14px 0;
+  background:var(--card);
+}
+blockquote p{font-size:16px;line-height:1.75}
+blockquote footer{color:var(--muted)}
+.docs{padding:22px;border:1px solid var(--line);border-radius:18px;background:var(--card)}
+.docs ul,.docs li{border-color:var(--line)}
+.form{
+  gap:20px;
+  padding:clamp(18px,3vw,28px);
+  border:1px solid var(--line);
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(20,33,43,.05);
+}
+.done{border-width:1px}
+.map{border:1px solid var(--line);border-radius:18px}
+.foot{border-color:var(--line)}
+.dock{
+  gap:10px;
+  padding:10px var(--gutter) calc(10px + env(safe-area-inset-bottom));
+  border-color:var(--line);
+  background:rgba(243,245,241,.96);
+  box-shadow:0 -8px 24px rgba(20,33,43,.08);
+  backdrop-filter:blur(12px);
+}
+.dock .btn{padding-inline:12px;font-size:14px}
+.btn{border-radius:10px;transition:background .18s,border-color .18s,transform .15s,box-shadow .18s}
+.btn:not(:disabled):hover{box-shadow:0 6px 16px rgba(169,29,49,.18)}
+.btn--ghost:not(:disabled):hover{box-shadow:0 6px 16px rgba(20,33,43,.12)}
+@media(min-width:760px) and (max-width:1050px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:759px){
+  .hero{padding-bottom:84px}
+  .hero__grid{gap:22px}
+  .hero__cta .btn{flex:1 1 100%}
+  .hero__facts{gap:8px}
+  .hero__facts li{font-size:13px}
+  .keytag-wrap{padding-top:16px}
+  .filters__bar{align-items:flex-start}
+  .sortbox{width:100%;display:grid;grid-template-columns:auto 1fr;align-items:center}
+  .sortbox .link-btn{grid-column:1/-1;justify-self:start}
+  .sortbox .input{width:100%;min-width:0}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .tag{padding:16px;border-radius:17px}
+  .tag__act{grid-template-columns:1fr}
+  .sheet{gap:28px}
+  .ledger{margin-bottom:36px}
+}
+@media(max-width:520px){
+  .top__in{min-height:66px}
+  .logo{font-size:18px}
+  .hero h1{font-size:clamp(32px,10vw,44px)}
+  .sec__head{margin-bottom:26px}
+  .grid{grid-template-columns:1fr;gap:14px;padding-top:18px}
+  .tag{padding:18px}
+  .tag__act{grid-template-columns:1fr 1fr}
+  .pair{grid-template-columns:minmax(0,1fr) 112px;gap:10px}
+  .calc__out dl div{align-items:flex-start}
+  .calc__out dd{text-align:right}
+  .docs{padding:18px}
+  .docs li{font-size:14px}
+  .form__row{grid-template-columns:1fr}
+  .foot .wrap{gap:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<!-- Спрайт силуэтов кузовов (оригинальные, без привязки к моделям).
+     Цвет кузова — через currentColor, стекло — через --glass. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="b-sedan" viewBox="0 0 200 76">
+      <path fill="currentColor" d="M8 56V46q0-4 6-5l34-5 18-17q3-3 8-3h46q6 0 10 4l20 16 38 5q8 2 8 9v10z"/>
+      <path fill="#CFE0E6" d="M72 22h44l18 14H54z"/>
+      <path stroke="currentColor" stroke-width="3" d="M94 21v15"/>
+      <circle cx="50" cy="58" r="13" fill="#14212B"/><circle cx="50" cy="58" r="5.5" fill="#C5CCC4"/><circle cx="150" cy="58" r="13" fill="#14212B"/><circle cx="150" cy="58" r="5.5" fill="#C5CCC4"/>
+    </symbol>
+    <symbol id="b-suv" viewBox="0 0 200 76">
+      <path fill="currentColor" d="M6 58V44q0-4 6-5l28-3 14-20q2-3 6-3h96q6 0 9 4l16 19 9 4q8 2 8 8v14z"/>
+      <path fill="#CFE0E6" d="M62 20h44v16H50zM112 20h36l12 16h-48z"/>
+      <path stroke="currentColor" stroke-width="3" d="M109 19v17"/>
+      <circle cx="48" cy="58" r="14" fill="#14212B"/><circle cx="48" cy="58" r="6" fill="#C5CCC4"/><circle cx="152" cy="58" r="14" fill="#14212B"/><circle cx="152" cy="58" r="6" fill="#C5CCC4"/>
+    </symbol>
+    <symbol id="b-hatch" viewBox="0 0 200 76">
+      <path fill="currentColor" d="M10 58V47q0-4 6-5l34-5 17-18q2-2 6-2h64q6 0 10 4l22 20 14 3q6 2 6 7v9z"/>
+      <path fill="#CFE0E6" d="M72 22h40l22 16H54z"/>
+      <path stroke="currentColor" stroke-width="3" d="M96 21v16"/>
+      <circle cx="52" cy="58" r="13" fill="#14212B"/><circle cx="52" cy="58" r="5.5" fill="#C5CCC4"/><circle cx="148" cy="58" r="13" fill="#14212B"/><circle cx="148" cy="58" r="5.5" fill="#C5CCC4"/>
+    </symbol>
+    <symbol id="b-wagon" viewBox="0 0 200 76">
+      <path fill="currentColor" d="M6 56V46q0-4 6-5l36-5 17-17q2-3 7-3h80q5 0 7 3l12 15q3 3 3 8v14z"/>
+      <path fill="#CFE0E6" d="M72 21h40v15H55zM118 21h30l8 15h-38z"/>
+      <path stroke="currentColor" stroke-width="3" d="M115 20v16"/>
+      <circle cx="48" cy="58" r="13" fill="#14212B"/><circle cx="48" cy="58" r="5.5" fill="#C5CCC4"/><circle cx="154" cy="58" r="13" fill="#14212B"/><circle cx="154" cy="58" r="5.5" fill="#C5CCC4"/>
+    </symbol>
+    <symbol id="tick" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<a class="skip" href="#catalog">Перейти к каталогу</a>
+
+<header class="top">
+  <div class="wrap top__in">
+    <a class="logo" href="#top" aria-label="Верста — на главную">
+      <svg width="26" height="34" viewBox="0 0 26 34" aria-hidden="true"><rect x="3" y="2" width="20" height="30" rx="3" fill="none" stroke="#14212B" stroke-width="2.5"/><path d="M3 12h20M3 22h20" stroke="#C81E35" stroke-width="3"/></svg>
+      Верста
+    </a>
+    <nav class="nav" aria-label="Основная">
+      <a href="#catalog">Каталог</a><a href="#why">Преимущества</a><a href="#calc">Калькулятор</a><a href="#trust">Отзывы</a><a href="#testdrive">Контакты</a>
+    </nav>
+    <a class="top__tel" href="tel:+74950000000">+7 (495) 000-00-00</a>
+    <a class="btn btn--sm top__cta" href="#testdrive">Тест-драйв</a>
+    <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mobileNav">Меню</button>
+  </div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="Мобильное меню">
+    <a href="#catalog">Каталог</a><a href="#why">Преимущества</a><a href="#calc">Калькулятор</a><a href="#trust">Отзывы</a><a href="#testdrive">Контакты</a>
+  </nav>
+</header>
+
+<main id="top">
+
+<!-- ===== БЛОК 1. HERO ===== -->
+<section class="hero" aria-labelledby="h-hero">
+  <div class="wrap hero__grid">
+    <div>
+      <h1 id="h-hero">Автомобили с проверенной историей и ценой без доплат</h1>
+      <p class="hero__lead">Каждую машину осматривают по 112 пунктам, отчёт по VIN лежит в карточке. Платёж и trade-in можно посчитать здесь же, до визита в салон.</p>
+      <div class="hero__cta">
+        <a class="btn" href="#catalog">Подобрать авто</a>
+        <a class="btn btn--ghost" href="#testdrive">Записаться на тест-драйв</a>
+      </div>
+      <ul class="hero__facts">
+        <li><strong id="stockCount">12</strong> авто в наличии</li>
+        <li><strong>12 месяцев</strong> гарантии</li>
+        <li>Ежедневно <strong>9:00–21:00</strong></li>
+      </ul>
+    </div>
+    <div class="keytag-wrap">
+      <article class="keytag" aria-label="Авто недели">
+        <h2>Skoda Kodiaq</h2>
+        <svg class="car" viewBox="0 0 200 76" role="img" aria-label="Силуэт внедорожника" style="color:#2F4A5C"><use href="#b-suv"/></svg>
+        <dl>
+          <div><dt>Год</dt><dd>2022</dd></div>
+          <div><dt>Пробег</dt><dd>41 000 км</dd></div>
+          <div><dt>Владельцев</dt><dd>1</dd></div>
+          <div><dt>Отчёт по VIN</dt><dd><span class="vin-ok">чистый</span></dd></div>
+        </dl>
+        <p class="keytag__price">3 690 000 ₽</p>
+        <button class="btn btn--sm" type="button" data-td="7" style="width:100%">Записаться на тест-драйв</button>
+      </article>
+    </div>
+  </div>
+  <div class="lane" aria-hidden="true"></div>
+</section>
+
+<!-- ===== БЛОК 2. КАТАЛОГ ===== -->
+<section class="sec sec--line" id="catalog" aria-labelledby="h-cat">
+  <div class="wrap">
+    <div class="sec__head">
+      <h2 id="h-cat">Подберите автомобиль</h2>
+      <p>Выберите марку, кузов и бюджет. Платёж в карточках посчитан при взносе 20% на 5 лет и ставке 18%.</p>
+    </div>
+
+    <form class="filters" id="filters" aria-label="Фильтры каталога" onsubmit="return false">
+      <div class="filters__row">
+        <div class="field"><label for="fBrand">Марка</label>
+          <select class="input" id="fBrand"><option value="">Любая</option></select></div>
+        <div class="field"><label for="fPrice">Цена до: <output id="fPriceOut">5 000 000 ₽</output></label>
+          <input type="range" id="fPrice" min="1000000" max="5000000" step="100000" value="5000000"></div>
+        <div class="field"><label for="fYear">Год выпуска от</label>
+          <select class="input" id="fYear"><option value="0">Любой</option></select></div>
+      </div>
+      <fieldset class="chips" id="fBody">
+        <legend class="sr">Тип кузова</legend>
+        <label class="chip"><input type="radio" name="body" value="" checked><span>Все кузова</span></label>
+        <label class="chip"><input type="radio" name="body" value="sedan"><span>Седан</span></label>
+        <label class="chip"><input type="radio" name="body" value="suv"><span>Внедорожник</span></label>
+        <label class="chip"><input type="radio" name="body" value="hatch"><span>Хэтчбек</span></label>
+        <label class="chip"><input type="radio" name="body" value="wagon"><span>Универсал</span></label>
+      </fieldset>
+    </form>
+
+    <div class="filters__bar">
+      <div class="countbox">
+        <p class="count" id="count" role="status" aria-live="polite"></p>
+        <p class="favcount" id="favCount" role="status" aria-live="polite" hidden></p>
+      </div>
+      <div class="sortbox">
+        <button type="button" class="link-btn" id="reset">Сбросить фильтры</button>
+        <label for="sort">Сортировка</label>
+        <select class="input" id="sort"><option value="price-asc">Сначала дешевле</option><option value="price-desc">Сначала дороже</option><option value="year-desc">Сначала новее</option><option value="km-asc">Меньше пробег</option></select>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<!-- ===== БЛОК 3. ПРЕИМУЩЕСТВА ===== -->
+<section class="sec sec--line" id="why" aria-labelledby="h-why">
+  <div class="wrap sheet">
+    <div class="sec__head">
+      <h2 id="h-why">Что мы проверяем до того, как вы приедете</h2>
+      <p>Четыре вещи, которые чаще всего пугают при покупке, закрыты документами, а не обещаниями.</p>
+    </div>
+    <ul class="checks">
+      <li><span class="tick"><svg width="18" height="18" aria-hidden="true"><use href="#tick"/></svg></span><div><h3>Гарантия 12 месяцев</h3><p>На двигатель, коробку и электронику. Условия прописаны в договоре, а не на рекламном баннере.</p><a href="#testdrive">Узнать условия на тест-драйве</a></div></li>
+      <li><span class="tick"><svg width="18" height="18" aria-hidden="true"><use href="#tick"/></svg></span><div><h3>Trade-in за один визит</h3><p>Оценим вашу машину за 30 минут и засчитаем сумму как первый взнос. Предварительную цену видно на сайте.</p><a href="#calc" data-open-tab="trade">Оценить свой автомобиль</a></div></li>
+      <li><span class="tick"><svg width="18" height="18" aria-hidden="true"><use href="#tick"/></svg></span><div><h3>Кредит и лизинг</h3><p>Работаем с несколькими банками и лизинговыми компаниями. Платёж считаете сами, ставку можно менять.</p><a href="#calc" data-open-tab="credit">Рассчитать платёж</a></div></li>
+      <li><span class="tick"><svg width="18" height="18" aria-hidden="true"><use href="#tick"/></svg></span><div><h3>История по VIN и осмотр по 112 пунктам</h3><p>Владельцы, ДТП, ограничения, пробег. Отчёт и акт осмотра можно скачать до покупки.</p><a href="#catalog">Выбрать автомобиль с отчётом</a></div></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== БЛОК 4. КАЛЬКУЛЯТОР ===== -->
+<section class="sec dark" id="calc" aria-labelledby="h-calc">
+  <div class="wrap">
+    <div class="sec__head">
+      <h2 id="h-calc">Посчитайте платёж и стоимость вашего авто</h2>
+      <p>Результат обновляется сразу. Это ориентир: окончательные условия подтверждают банк и осмотр.</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Тип расчёта">
+      <button class="tab" type="button" role="tab" id="tab-credit" aria-selected="true" aria-controls="panel-credit">Кредит</button>
+      <button class="tab" type="button" role="tab" id="tab-trade" aria-selected="false" aria-controls="panel-trade" tabindex="-1">Trade-in</button>
+    </div>
+
+    <div class="calc" id="panel-credit" role="tabpanel" aria-labelledby="tab-credit">
+      <div class="calc__form">
+        <div class="pair">
+          <div class="field"><label for="cPrice">Стоимость авто</label><input type="range" id="cPrice" min="500000" max="6000000" step="50000" value="2500000"></div>
+          <div class="field"><label class="sr" for="cPriceN">Стоимость, ₽</label><input class="input" id="cPriceN" type="number" inputmode="numeric" min="500000" max="6000000" step="50000" value="2500000"></div>
+        </div>
+        <div class="pair">
+          <div class="field"><label for="cDown">Первый взнос: <output id="cDownOut"></output></label><input type="range" id="cDown" min="0" max="70" step="1" value="20"></div>
+          <p class="hint" id="cDownRub"></p>
+        </div>
+        <fieldset class="chips" id="cTerm">
+          <legend class="sr">Срок кредита</legend>
+          <label class="chip"><input type="radio" name="term" value="12"><span>1 год</span></label>
+          <label class="chip"><input type="radio" name="term" value="24"><span>2 года</span></label>
+          <label class="chip"><input type="radio" name="term" value="36"><span>3 года</span></label>
+          <label class="chip"><input type="radio" name="term" value="60" checked><span>5 лет</span></label>
+          <label class="chip"><input type="radio" name="term" value="84"><span>7 лет</span></label>
+        </fieldset>
+        <div class="field" style="max-width:240px"><label for="cRate">Ставка, % годовых</label><input class="input" id="cRate" type="number" inputmode="decimal" min="0" max="40" step="0.1" value="18"><span class="hint">Подставьте ставку вашего банка.</span></div>
+      </div>
+      <div class="calc__out" aria-live="polite">
+        <p>Платёж в месяц</p>
+        <p class="big" id="oPay">—</p>
+        <dl><div><dt>Сумма кредита</dt><dd id="oLoan">—</dd></div><div><dt>Переплата</dt><dd id="oOver">—</dd></div><div><dt>Всего выплатите</dt><dd id="oTotal">—</dd></div></dl>
+        <a class="btn" href="#testdrive">Оставить заявку</a>
+        <p class="note">Аннуитетный платёж без страховок и комиссий.</p>
+      </div>
+    </div>
+
+    <div class="calc" id="panel-trade" role="tabpanel" aria-labelledby="tab-trade" hidden>
+      <div class="calc__form">
+        <div class="field"><label for="tClass">Класс автомобиля</label>
+          <select class="input" id="tClass"><option value="1300000">Компактный (хэтчбек, седан B-класса)</option><option value="2400000" selected>Средний (седан, кроссовер)</option><option value="4800000">Премиум (внедорожник, бизнес-седан)</option></select></div>
+        <div class="field" style="max-width:240px"><label for="tYear">Год выпуска</label><select class="input" id="tYear"></select></div>
+        <div class="field" style="max-width:240px"><label for="tKm">Пробег, км</label><input class="input" id="tKm" type="number" inputmode="numeric" min="0" max="500000" step="1000" value="80000"></div>
+        <fieldset class="chips" id="tCond">
+          <legend class="sr">Состояние</legend>
+          <label class="chip"><input type="radio" name="cond" value="1"><span>Отличное</span></label>
+          <label class="chip"><input type="radio" name="cond" value="0.92" checked><span>Хорошее</span></label>
+          <label class="chip"><input type="radio" name="cond" value="0.8"><span>Нужен ремонт</span></label>
+        </fieldset>
+      </div>
+      <div class="calc__out" aria-live="polite">
+        <p>Предварительная оценка</p>
+        <p class="big" id="tOut">—</p>
+        <dl><div><dt>Диапазон</dt><dd id="tRange">—</dd></div></dl>
+        <button class="btn" type="button" id="applyTrade">Учесть как первый взнос</button>
+        <a class="btn btn--ghost" href="#testdrive">Записаться на оценку</a>
+        <p class="note">Точную цену назовём после осмотра за 30 минут.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== БЛОК 5. ДОВЕРИЕ ===== -->
+<section class="sec" id="trust" aria-labelledby="h-trust">
+  <div class="wrap">
+    <div class="sec__head"><h2 id="h-trust">Нам доверяют, потому что всё можно проверить</h2></div>
+    <dl class="ledger">
+      <div><dd>1 240</dd><dt>проданных автомобилей за 2025 год</dt></div>
+      <div><dd>4,8 из 5</dd><dt>средняя оценка клиентов</dt></div>
+      <div><dd>12 лет</dd><dt>работаем в Москве</dt></div>
+      <div><dd>112</dd><dt>пунктов в акте осмотра</dt></div>
+    </dl>
+    <div class="trust">
+      <div class="reviews">
+        <blockquote><p>Показали отчёт по VIN и акт осмотра ещё до поездки. На месте цена совпала с сайтом, торговаться не пришлось.</p><footer>Алексей, Kia Sorento 2021, март 2026</footer></blockquote>
+        <blockquote><p>Сдал старую машину по trade-in и взял новую в тот же день. Оценка отличалась от сайта на 20 тысяч.</p><footer>Марина, Hyundai Tucson 2022, июнь 2026</footer></blockquote>
+        <blockquote><p>Платёж по кредиту на сайте совпал с договором до рубля. Для меня это главный признак честности.</p><footer>Игорь, Toyota Camry 2021, август 2026</footer></blockquote>
+      </div>
+      <div class="docs">
+        <h3>Документы и сертификаты</h3>
+        <ul>
+          <li><span>Договор официального дилера</span><span>действует</span></li>
+          <li><span>Сертификат сервисного центра</span><span>2026</span></li>
+          <li><span>Лицензии кредитных партнёров</span><span>4 банка</span></li>
+          <li><span>Акт осмотра по 112 пунктам</span><span>образец PDF</span></li>
+        </ul>
+        <p class="note">Цифры и отзывы демонстрационные: перед публикацией замените их данными салона.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== БЛОК 6. ТЕСТ-ДРАЙВ И КОНТАКТЫ ===== -->
+<section class="sec sec--line" id="testdrive" aria-labelledby="h-td">
+  <div class="wrap td">
+    <div>
+      <div class="sec__head"><h2 id="h-td">Запишитесь на тест-драйв</h2><p>Менеджер перезвонит в течение 15 минут в рабочее время и подтвердит время.</p></div>
+      <form class="form" id="tdForm" novalidate>
+        <div class="form__row">
+          <div class="field"><label for="tdName">Имя</label><input class="input" id="tdName" name="name" autocomplete="given-name" required aria-describedby="eName"><span class="err" id="eName"></span></div>
+          <div class="field"><label for="tdPhone">Телефон</label><input class="input" id="tdPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" required aria-describedby="ePhone"><span class="err" id="ePhone"></span></div>
+        </div>
+        <div class="form__row">
+          <div class="field"><label for="tdCar">Автомобиль</label><select class="input" id="tdCar" name="car" required aria-describedby="eCar"><option value="">Выберите из каталога</option></select><span class="err" id="eCar"></span></div>
+          <div class="field"><label for="tdDate">Дата</label><input class="input" id="tdDate" name="date" type="date" required aria-describedby="eDate"><span class="err" id="eDate"></span></div>
+        </div>
+        <fieldset class="chips" id="tdTime" aria-describedby="eTime"><legend style="font-weight:500;font-size:14px;margin-bottom:8px">Время</legend>
+          <label class="chip"><input type="radio" name="time" value="10:00"><span>10:00</span></label>
+          <label class="chip"><input type="radio" name="time" value="12:00"><span>12:00</span></label>
+          <label class="chip"><input type="radio" name="time" value="14:00"><span>14:00</span></label>
+          <label class="chip"><input type="radio" name="time" value="16:00"><span>16:00</span></label>
+          <label class="chip"><input type="radio" name="time" value="18:00"><span>18:00</span></label>
+          <label class="chip"><input type="radio" name="time" value="20:00"><span>20:00</span></label>
+        </fieldset>
+        <span class="err" id="eTime"></span>
+        <label class="check"><input type="checkbox" id="tdAgree" aria-describedby="eAgree"><span>Согласен на обработку персональных данных и на звонок для подтверждения записи</span></label>
+        <span class="err" id="eAgree"></span>
+        <button class="btn" type="submit">Записаться на тест-драйв</button>
+      </form>
+      <div class="done" id="tdDone" hidden tabindex="-1">
+        <h3>Заявка принята</h3>
+        <p id="tdSummary"></p>
+        <p class="note">Это демонстрационная форма: данные никуда не отправляются. Подключите обработчик заявок на сервере.</p>
+        <button class="btn btn--ghost" type="button" id="tdAgain" style="margin-top:16px">Записать на другую машину</button>
+      </div>
+    </div>
+
+    <aside class="contacts" aria-labelledby="h-con">
+      <h3 id="h-con">Как нас найти</h3>
+      <dl>
+        <div><dt>Адрес</dt><dd>Москва, Варшавское шоссе, 112 (демо-адрес)</dd></div>
+        <div><dt>Телефон</dt><dd><a href="tel:+74950000000">+7 (495) 000-00-00</a></dd></div>
+        <div><dt>Часы работы</dt><dd>Ежедневно, 9:00–21:00</dd></div>
+      </dl>
+      <div class="map">
+        <svg viewBox="0 0 400 240" role="img" aria-label="Схема проезда: салон рядом с Варшавским шоссе">
+          <rect width="400" height="240" fill="#E3E8E0"/>
+          <path d="M-10 190L410 60" stroke="#fff" stroke-width="22"/><path d="M-10 190L410 60" stroke="#C5CCC4" stroke-width="2" stroke-dasharray="10 8"/>
+          <path d="M120 -10L170 250" stroke="#fff" stroke-width="12"/><path d="M290 -10L250 250" stroke="#fff" stroke-width="12"/>
+          <rect x="196" y="82" width="44" height="30" rx="4" fill="#14212B" opacity=".12"/>
+          <g transform="translate(218 74)"><path d="M0 0c-9 0-15 6-15 14 0 10 15 26 15 26s15-16 15-26c0-8-6-14-15-14z" fill="#C81E35"/><circle cy="14" r="5.5" fill="#fff"/></g>
+          <text x="14" y="228" font-size="12" fill="#4F5D66" font-family="Golos Text,sans-serif">Схема условная</text>
+        </svg>
+      </div>
+      <a class="btn btn--ghost" href="https://yandex.ru/maps/?text=Москва%2C%20Варшавское%20шоссе%2C%20112" target="_blank" rel="noopener">Построить маршрут</a>
+    </aside>
+  </div>
+</section>
+</main>
+
+<footer class="foot"><div class="wrap"><span>© 2026 Верста. Демонстрационный сайт автосалона.</span><span>Цены и характеристики не являются публичной офертой.</span></div></footer>
+
+<div class="dock"><a class="btn btn--ghost btn--sm" href="tel:+74950000000">Позвонить</a><a class="btn btn--sm" href="#testdrive">Тест-драйв</a></div>
+
+<script>
+/* =========================================================
+   ДАННЫЕ (демо). В продакшене заменить ответом API/CRM.
+   ========================================================= */
+const CARS = [
+  {id:1, brand:'Toyota',     model:'Camry',     year:2021, km:48000,  price:2890000, body:'sedan', color:'#2F3A44', gear:'АТ',   owners:1, image:'images/toyota-camry.jpg', imageAlt:'Toyota Camry, вид спереди-сбоку', imageSource:'https://commons.wikimedia.org/wiki/File:2018_Toyota_Camry_(ASV70R)_Ascent_sedan_(2018-08-27)_01.jpg', imageAuthor:'EurovisionNim', imageLicense:'CC BY-SA 4.0', imageLicenseUrl:'https://creativecommons.org/licenses/by-sa/4.0/'},
+  {id:2, brand:'Kia',        model:'Rio',       year:2020, km:62000,  price:1390000, body:'sedan', color:'#8A9AA6', gear:'АТ',   owners:1, image:'images/kia-rio.jpg', imageAlt:'Kia Rio, вид сбоку', imageSource:'https://commons.wikimedia.org/wiki/File:Kia_Rio_Sedan_YB.jpg', imageAuthor:'Bull-Doser', imageLicense:'общественное достояние', imageLicenseUrl:'https://commons.wikimedia.org/wiki/Template:PD-user'},
+  {id:3, brand:'Hyundai',    model:'Solaris',   year:2019, km:84000,  price:1150000, body:'sedan', color:'#B9C1C6', gear:'МТ',   owners:2, image:'images/hyundai-solaris.jpg', imageAlt:'Hyundai Solaris, вид спереди', imageSource:'https://commons.wikimedia.org/wiki/File:2014_Hyundai_Solaris_brown_front.jpg', imageAuthor:'Throwawayacc222', imageLicense:'CC0', imageLicenseUrl:'https://creativecommons.org/publicdomain/zero/1.0/'},
+  {id:4, brand:'Volkswagen', model:'Polo',      year:2022, km:31000,  price:1690000, body:'hatch', color:'#7C2D3A', gear:'АТ',   owners:1},
+  {id:5, brand:'Mazda',      model:'3',         year:2020, km:57000,  price:1850000, body:'hatch', color:'#5B6770', gear:'АТ',   owners:1},
+  {id:6, brand:'Haval',      model:'Jolion',    year:2023, km:19000,  price:2190000, body:'suv',   color:'#1F5A4A', gear:'РКПП', owners:1},
+  {id:7, brand:'Skoda',      model:'Kodiaq',    year:2022, km:41000,  price:3690000, body:'suv',   color:'#2F4A5C', gear:'РКПП', owners:1},
+  {id:8, brand:'Kia',        model:'Sorento',   year:2021, km:66000,  price:3390000, body:'suv',   color:'#3A3F45', gear:'АТ',   owners:2},
+  {id:9, brand:'BMW',        model:'X5',        year:2019, km:92000,  price:4890000, body:'suv',   color:'#14212B', gear:'АТ',   owners:2},
+  {id:10,brand:'Skoda',      model:'Octavia',   year:2021, km:52000,  price:2290000, body:'wagon', color:'#A3AEB5', gear:'РКПП', owners:1},
+  {id:11,brand:'Volkswagen', model:'Passat',    year:2018, km:101000, price:1980000, body:'wagon', color:'#6B4E3D', gear:'АТ',   owners:2},
+  {id:12,brand:'Geely',      model:'Atlas Pro', year:2024, km:9000,   price:2590000, body:'suv',   color:'#C9CED1', gear:'АТ',   owners:1}
+];
+const BODY = {sedan:'Седан', suv:'Внедорожник', hatch:'Хэтчбек', wagon:'Универсал'};
+
+/* ---------- утилиты ---------- */
+const $  = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const rub = n => new Intl.NumberFormat('ru-RU').format(Math.round(n)) + ' ₽';
+const num = n => new Intl.NumberFormat('ru-RU').format(Math.round(n));
+
+/** Аннуитетный платёж: P — сумма кредита, rate — % годовых, n — месяцев */
+function annuity(P, rate, n){
+  if (P <= 0) return 0;
+  const r = rate / 12 / 100;
+  return r === 0 ? P / n : P * r / (1 - Math.pow(1 + r, -n));
+}
+const monthlyFor = price => annuity(price * 0.8, 18, 60);
+
+/* ---------- мобильное меню ---------- */
+const menuBtn = $('#menuBtn'), mnav = $('#mobileNav');
+menuBtn.addEventListener('click', () => {
+  const open = mnav.classList.toggle('open');
+  menuBtn.setAttribute('aria-expanded', open);
+});
+$$('#mobileNav a').forEach(a => a.addEventListener('click', () => {
+  mnav.classList.remove('open'); menuBtn.setAttribute('aria-expanded', false);
+}));
+
+/* =========================================================
+   КАТАЛОГ: фильтры, сортировка, рендер карточек
+   ========================================================= */
+const fBrand = $('#fBrand'), fPrice = $('#fPrice'), fYear = $('#fYear'), sort = $('#sort');
+[...new Set(CARS.map(c => c.brand))].sort().forEach(b => fBrand.add(new Option(b, b)));
+[...new Set(CARS.map(c => c.year))].sort((a,b)=>b-a).forEach(y => fYear.add(new Option(y, y)));
+$('#stockCount').textContent = CARS.length;
+
+/* ---------- избранное: localStorage с защитой try/catch ----------
+   Если доступ к хранилищу запрещён, избранное живёт в памяти до перезагрузки. */
+const FAV_KEY = 'versta:favs';
+const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.2-9.3C1.7 8 3.6 4.8 6.9 4.8c1.9 0 3.5 1 5.1 3 1.6-2 3.2-3 5.1-3 3.3 0 5.2 3.2 4.1 6.4-1.7 4.7-9.2 9.3-9.2 9.3z"/></svg>';
+function loadFavs(){
+  try {
+    const arr = JSON.parse(localStorage.getItem(FAV_KEY) || '[]');
+    return new Set(Array.isArray(arr) ? arr.filter(id => CARS.some(c => c.id === id)) : []);
+  } catch (e) { return new Set(); }
+}
+function saveFavs(){
+  try { localStorage.setItem(FAV_KEY, JSON.stringify([...favs])); } catch (e) { /* хранилище недоступно */ }
+}
+const favs = loadFavs();
+function renderFavCount(){
+  const el = $('#favCount');
+  el.hidden = favs.size === 0;
+  el.innerHTML = favs.size ? `${HEART}В избранном: ${favs.size}` : '';
+}
+
+function cardHTML(c){
+  const on = favs.has(c.id);
+  const visual = c.image
+    ? `<img class="car car--photo" src="${c.image}" alt="${c.imageAlt}" loading="lazy" decoding="async">
+      <p class="photo-credit">Фото: <a href="${c.imageSource}" target="_blank" rel="noopener noreferrer">${c.imageAuthor}</a> · <a href="${c.imageLicenseUrl}" target="_blank" rel="noopener noreferrer">${c.imageLicense}</a></p>`
+    : `<svg class="car" viewBox="0 0 200 76" role="img" aria-label="${BODY[c.body]}" style="color:${c.color}"><use href="#b-${c.body}"/></svg>`;
+  return `<article class="tag">
+    <button class="fav" type="button" data-fav="${c.id}" aria-pressed="${on}" aria-label="В избранное: ${c.brand} ${c.model}">${HEART}</button>
+    <div class="tag__body">
+      <h3>${c.brand} ${c.model}</h3>
+      ${visual}
+      <ul class="spec"><li>${c.year} год</li><li>${num(c.km)} км</li><li>${c.gear}</li><li>${c.owners} влад.</li></ul>
+      <p class="tag__price">${rub(c.price)}</p>
+      <p class="tag__pay">от ${rub(monthlyFor(c.price))} в месяц</p>
+    </div>
+    <div class="tag__act">
+      <button class="btn btn--ghost btn--sm" type="button" data-calc="${c.id}">В калькулятор</button>
+      <button class="btn btn--sm" type="button" data-td="${c.id}">Тест-драйв</button>
+    </div>
+  </article>`;
+}
+
+function renderCatalog(){
+  const body = $('input[name=body]:checked').value;
+  const maxP = +fPrice.value, minY = +fYear.value, brand = fBrand.value;
+  $('#fPriceOut').textContent = rub(maxP);
+  const list = CARS.filter(c => (!brand || c.brand === brand) && (!body || c.body === body) && c.price <= maxP && c.year >= minY);
+  const s = sort.value;
+  list.sort((a,b) => s==='price-asc' ? a.price-b.price : s==='price-desc' ? b.price-a.price : s==='year-desc' ? b.year-a.year : a.km-b.km);
+  $('#count').textContent = list.length ? `Найдено: ${list.length}` : 'Ничего не найдено';
+  $('#grid').innerHTML = list.length ? list.map(cardHTML).join('') :
+    `<div class="empty"><p>По этим условиям машин нет. Увеличьте бюджет или уберите часть фильтров.</p><button class="btn btn--ghost btn--sm" type="button" id="emptyReset">Сбросить фильтры</button></div>`;
+}
+function resetFilters(){
+  fBrand.value = ''; fPrice.value = fPrice.max; fYear.value = '0'; sort.value = 'price-asc';
+  $('input[name=body][value=""]').checked = true; renderCatalog();
+}
+$('#filters').addEventListener('input', renderCatalog);
+sort.addEventListener('change', renderCatalog);
+$('#reset').addEventListener('click', resetFilters);
+$('#grid').addEventListener('click', e => { if (e.target.id === 'emptyReset') resetFilters(); });
+$('#grid').addEventListener('click', e => {
+  const btn = e.target.closest('[data-fav]');
+  if (!btn) return;
+  const id = +btn.dataset.fav;
+  favs.has(id) ? favs.delete(id) : favs.add(id);
+  btn.setAttribute('aria-pressed', favs.has(id));
+  saveFavs(); renderFavCount();
+});
+renderCatalog();
+renderFavCount();
+
+/* =========================================================
+   КАЛЬКУЛЯТОР КРЕДИТА
+   ========================================================= */
+const cPrice = $('#cPrice'), cPriceN = $('#cPriceN'), cDown = $('#cDown'), cRate = $('#cRate');
+function calcCredit(){
+  const price = +cPrice.value, pct = +cDown.value, down = price * pct / 100;
+  const term = +$('input[name=term]:checked').value;
+  const rate = Math.min(40, Math.max(0, +cRate.value || 0));
+  const loan = price - down, pay = annuity(loan, rate, term), total = pay * term;
+  $('#cDownOut').textContent = pct + '%';
+  $('#cDownRub').textContent = rub(down);
+  $('#oPay').textContent = rub(pay);
+  $('#oLoan').textContent = rub(loan);
+  $('#oOver').textContent = rub(total - loan);
+  $('#oTotal').textContent = rub(total + down);
+}
+cPrice.addEventListener('input', () => { cPriceN.value = cPrice.value; calcCredit(); });
+cPriceN.addEventListener('input', () => {
+  cPrice.value = Math.min(6000000, Math.max(500000, +cPriceN.value || 0)); calcCredit();
+});
+[cDown, cRate, $('#cTerm')].forEach(el => el.addEventListener('input', calcCredit));
+
+/* Trade-in: демо-модель остаточной стоимости.
+   значение = класс × e^(−0,13 × возраст) × (1 − пробег/400 000, не более 0,5) × состояние */
+const tYear = $('#tYear');
+for (let y = 2026; y >= 2008; y--) tYear.add(new Option(y, y));
+tYear.value = 2018;
+let tradeValue = 0;
+function calcTrade(){
+  const base = +$('#tClass').value, age = 2026 - (+tYear.value), km = Math.max(0, +$('#tKm').value || 0);
+  const cond = +$('input[name=cond]:checked').value;
+  const v = base * Math.exp(-0.13 * age) * (1 - Math.min(0.5, km / 400000)) * cond;
+  const round = x => Math.round(x / 10000) * 10000;
+  tradeValue = round(v);
+  $('#tOut').textContent = rub(tradeValue);
+  $('#tRange').textContent = `${num(round(v*0.94))} – ${num(round(v*1.06))} ₽`;
+}
+[$('#tClass'), tYear, $('#tKm'), $('#tCond')].forEach(el => el.addEventListener('input', calcTrade));
+
+/* Вкладки с управлением стрелками */
+function openTab(name){
+  ['credit','trade'].forEach(t => {
+    const on = t === name, tab = $('#tab-' + t);
+    tab.setAttribute('aria-selected', on); tab.tabIndex = on ? 0 : -1;
+    $('#panel-' + t).hidden = !on;
+  });
+}
+$('#tab-credit').addEventListener('click', () => openTab('credit'));
+$('#tab-trade').addEventListener('click', () => openTab('trade'));
+$('.tabs').addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowLeft'){
+    const next = $('#tab-credit').getAttribute('aria-selected') === 'true' ? 'trade' : 'credit';
+    openTab(next); $('#tab-' + next).focus();
+  }
+});
+$$('[data-open-tab]').forEach(a => a.addEventListener('click', () => openTab(a.dataset.openTab)));
+$('#applyTrade').addEventListener('click', () => {
+  cDown.value = Math.min(70, Math.round(tradeValue / +cPrice.value * 100));
+  openTab('credit'); calcCredit();
+  $('#panel-credit').scrollIntoView({behavior:'smooth', block:'center'});
+});
+calcCredit(); calcTrade();
+
+/* =========================================================
+   КНОПКИ НА КАРТОЧКАХ: «В калькулятор» и «Тест-драйв»
+   ========================================================= */
+const tdCar = $('#tdCar');
+CARS.forEach(c => tdCar.add(new Option(`${c.brand} ${c.model}, ${c.year}`, c.id)));
+document.addEventListener('click', e => {
+  const calcBtn = e.target.closest('[data-calc]'), tdBtn = e.target.closest('[data-td]');
+  if (calcBtn){
+    const c = CARS.find(x => x.id === +calcBtn.dataset.calc);
+    cPrice.value = cPriceN.value = Math.min(6000000, c.price);
+    openTab('credit'); calcCredit();
+    $('#calc').scrollIntoView({behavior:'smooth'});
+  }
+  if (tdBtn){
+    tdCar.value = tdBtn.dataset.td;
+    showForm(); $('#testdrive').scrollIntoView({behavior:'smooth'});
+    setTimeout(() => $('#tdName').focus({preventScroll:true}), 450);
+  }
+});
+
+/* =========================================================
+   ФОРМА ТЕСТ-ДРАЙВА: маска телефона, валидация, подтверждение
+   ========================================================= */
+const form = $('#tdForm'), done = $('#tdDone'), phone = $('#tdPhone'), date = $('#tdDate');
+const pad = n => String(n).padStart(2, '0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const tomorrow = () => new Date(Date.now() + 86400000);
+date.min = iso(new Date()); date.value = iso(tomorrow());
+
+phone.addEventListener('input', () => {
+  let d = phone.value.replace(/\D/g, '');
+  if (d[0] === '8') d = '7' + d.slice(1);
+  if (d && d[0] !== '7') d = '7' + d;
+  d = d.slice(0, 11);
+  let out = d ? '+7' : '';
+  if (d.length > 1) out += ' (' + d.slice(1, 4);
+  if (d.length > 4) out += ') ' + d.slice(4, 7);
+  if (d.length > 7) out += '-' + d.slice(7, 9);
+  if (d.length > 9) out += '-' + d.slice(9, 11);
+  phone.value = out;
+});
+
+function setErr(input, errId, msg){
+  $('#' + errId).textContent = msg || '';
+  if (input) input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+  return !msg;
+}
+function validate(){
+  const bad = [], name = $('#tdName'), agree = $('#tdAgree');
+  if (!setErr(name, 'eName', name.value.trim().length < 2 ? 'Введите имя, не короче двух букв' : '')) bad.push(name);
+  if (!setErr(phone, 'ePhone', phone.value.replace(/\D/g, '').length < 11 ? 'Введите телефон полностью: +7 и 10 цифр' : '')) bad.push(phone);
+  if (!setErr(tdCar, 'eCar', !tdCar.value ? 'Выберите автомобиль для тест-драйва' : '')) bad.push(tdCar);
+  if (!setErr(date, 'eDate', !date.value || date.value < iso(new Date()) ? 'Выберите сегодняшнюю или будущую дату' : '')) bad.push(date);
+  if (!setErr(null, 'eTime', !$('input[name=time]:checked') ? 'Выберите удобное время' : '')) bad.push($('input[name=time]'));
+  if (!setErr(agree, 'eAgree', !agree.checked ? 'Без согласия мы не можем принять заявку' : '')) bad.push(agree);
+  return bad;
+}
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const bad = validate();
+  if (bad.length){ bad[0].focus(); return; }
+  const c = CARS.find(x => x.id === +tdCar.value);
+  const d = new Date(date.value).toLocaleDateString('ru-RU', {day:'numeric', month:'long'});
+  $('#tdSummary').textContent = `${$('#tdName').value.trim()}, ждём вас ${d} в ${$('input[name=time]:checked').value} на ${c.brand} ${c.model}. Перезвоним на ${phone.value} для подтверждения.`;
+  form.hidden = true; done.hidden = false; done.focus();
+});
+$$('#tdForm input, #tdForm select').forEach(el => el.addEventListener('input', () => {
+  if (el.getAttribute('aria-invalid') === 'true') validate();
+}));
+function showForm(){ done.hidden = true; form.hidden = false; }
+$('#tdAgain').addEventListener('click', () => {
+  form.reset(); date.value = iso(tomorrow()); showForm(); $('#tdName').focus();
+});
+</script>
+
+<!-- Подсветка текущего раздела в меню (десктоп и мобильное).
+     Шапка фиксирована, высота 68px: верхняя граница наблюдаемой зоны сдвинута на 68px. -->
+<script>
+(() => {
+  if (!('IntersectionObserver' in window)) return;
+  const HEADER = 68;
+  const links = [...document.querySelectorAll('.nav a[href^="#"], .mobile-nav a[href^="#"]')];
+  const sections = [...new Set(links.map(a => a.getAttribute('href').slice(1)))]
+    .map(id => document.getElementById(id)).filter(Boolean);
+  const visible = new Set();
+  function mark(){
+    // из пересекающих зону разделов берём самый нижний в документе — тот, что только что вошёл
+    const current = sections.filter(s => visible.has(s)).pop();
+    links.forEach(a => {
+      if (current && a.getAttribute('href') === '#' + current.id) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+    });
+  }
+  // Открытое мобильное меню сдвигает страницу вниз: пока оно открыто, подсветку не пересчитываем
+  const mnav = document.getElementById('mobileNav');
+  const menuOpen = () => mnav && mnav.classList.contains('open');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => e.isIntersecting ? visible.add(e.target) : visible.delete(e.target));
+    if (!menuOpen()) mark();
+  }, { rootMargin: `-${HEADER}px 0px -55% 0px` });
+  sections.forEach(s => io.observe(s));
+  const btn = document.getElementById('menuBtn');
+  if (btn) btn.addEventListener('click', () => { if (!menuOpen()) mark(); });
+})();
+</script>
+</body>
+</html>
